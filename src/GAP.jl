@@ -119,8 +119,11 @@ function __init__()
     ## With Julia 1.2, this will be possible and this hack could then be replaced with the
     ## corresponding function call in in ccalls.jl (func::GapObj)(...)
     MPtr = Base.MainInclude.eval(:(ForeignGAP.MPtr))
+    global call_gap_func
+    call_gap_func_temp = call_gap_func
     Base.MainInclude.eval(:(
-        (func::$MPtr)(args...; kwargs...) = GAP.call_gap_func(func, args...; kwargs...)
+        __call_gap_func_temp = $(call_gap_func_temp);
+        (func::$MPtr)(args...; kwargs...) = __call_gap_func_temp(func, args...; kwargs...)
     ))
 end
 
